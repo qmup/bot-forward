@@ -1,10 +1,11 @@
 {
   "name": "bot_fwd",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "bin/forward.js",
   "scripts": {
-    "start": "node index.js",
-    "get-id": "node getId.js"
+    "start": "node bin/forward.js",
+    "get-id": "node bin/get-id.js",
+    "football": "node bin/football.js"
   },
   "keywords": [],
   "author": "",
