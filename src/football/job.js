@@ -37,7 +37,7 @@ async function runFootballJob(now = new Date()) {
       console.log(`Sent football results to ${target}`);
     }
   } finally {
-    await client.disconnect();
+    await client.destroy();
   }
 
   return { sent: true, text, count: matches.length };

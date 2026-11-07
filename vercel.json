@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
+  "functions": {
+    "api/*.js": { "maxDuration": 300 }
+  },
+  "schedules": {
+    "forwarder": {
+      "schedule": "*/15 17-23,0-2 * * *",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "path": "/api/forward",
+      "requestMethod": "GET"
+    },
+    "football-results": {
+      "schedule": "0 8 * * *",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "path": "/api/football",
+      "requestMethod": "GET"
+    }
+  }
+}

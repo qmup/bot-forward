@@ -10,7 +10,6 @@ module.exports = {
       script: "bin/football.js",
       cwd: __dirname,
       cron_restart: "0 8 * * *",
-      tz: "Asia/Ho_Chi_Minh",
       autorestart: false,
     },
   ],

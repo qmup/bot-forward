@@ -3,6 +3,8 @@ const { CustomFile } = require("telegram/client/uploads");
 const { TARGETS } = require("../config");
 const {
   getText,
+  getDocumentSize,
+  messageLink,
   getDocumentFileName,
   getDocumentInfo,
   downloadMediaBuffer,
@@ -46,12 +48,34 @@ async function sendPhotoToTargets(client, msg) {
   }
 }
 
-async function sendDocumentToTargets(client, msg) {
+async function sendOversizeNoticeToTargets(client, msg, size) {
+  const text = getText(msg);
+  const sizeMb = (size / 1024 / 1024).toFixed(1);
+  const notice = `📎 File lớn (${sizeMb} MB), xem trong nhóm gốc: ${messageLink(msg.chatId, msg.id)}`;
+
+  for (const target of TARGETS) {
+    await client.sendMessage(target, {
+      message: text ? `${text}\n\n${notice}` : notice,
+      formattingEntities: text ? msg.entities || undefined : undefined,
+      linkPreview: false,
+    });
+  }
+}
+
+async function sendDocumentToTargets(client, msg, maxFileBytes) {
   const text = getText(msg);
   const document = msg.media.document;
 
   if (!document || !(document instanceof Api.Document)) {
     throw new Error(`Invalid document in message ${msg.id}`);
+  }
+
+  const size = getDocumentSize(document);
+
+  if (size > maxFileBytes) {
+    console.log(`Document ${msg.id} is ${size} bytes, sending link instead`);
+    await sendOversizeNoticeToTargets(client, msg, size);
+    return;
   }
 
   const info = getDocumentInfo(document);
@@ -99,7 +123,7 @@ async function sendOtherMediaToTargets(client, msg) {
   }
 }
 
-async function handleMessage(client, msg) {
+async function handleMessage(client, msg, { maxFileBytes = Infinity } = {}) {
   if (!msg) return;
 
   const text = getText(msg);
@@ -135,7 +159,7 @@ async function handleMessage(client, msg) {
   }
 
   if (msg.media instanceof Api.MessageMediaDocument) {
-    await sendDocumentToTargets(client, msg);
+    await sendDocumentToTargets(client, msg, maxFileBytes);
     console.log(`Forwarded document/media ${msg.id}`);
     return;
   }

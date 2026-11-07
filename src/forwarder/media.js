@@ -89,8 +89,19 @@ async function downloadMediaBuffer(client, msg) {
   return buffer;
 }
 
+function getDocumentSize(document) {
+  return Number(document.size?.toString() ?? 0);
+}
+
+function messageLink(chatId, msgId) {
+  const internalId = String(chatId).replace(/^-100/, "");
+  return `https://t.me/c/${internalId}/${msgId}`;
+}
+
 module.exports = {
   getText,
+  getDocumentSize,
+  messageLink,
   extensionFromMime,
   getDocumentFileName,
   getDocumentInfo,

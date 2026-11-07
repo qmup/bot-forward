@@ -2,6 +2,7 @@ const path = require("path");
 
 require("dotenv").config({
   path: path.join(__dirname, "..", ".env"),
+  quiet: true,
 });
 
 const SOURCE_GROUP_ID = -1004424683355;
@@ -22,6 +23,13 @@ const COMPETITIONS = [
 
 const TIMEZONE = "Asia/Ho_Chi_Minh";
 
+// Polling mode (Vercel): keeps each run well inside the Hobby 300s limit.
+const POLL_MAX_MESSAGES = 20;
+const POLL_MAX_FILE_BYTES = 20 * 1024 * 1024;
+const POLL_TIME_BUDGET_MS = 240 * 1000;
+// A gap this long since the last run means the bot was off-hours: skip the backlog.
+const POLL_NEW_WINDOW_GAP_MS = 2 * 60 * 60 * 1000;
+
 module.exports = {
   apiId: Number(process.env.API_ID),
   apiHash: process.env.API_HASH,
@@ -32,5 +40,10 @@ module.exports = {
   TARGETS,
   COMPETITIONS,
   TIMEZONE,
+  POLL_MAX_MESSAGES,
+  POLL_MAX_FILE_BYTES,
+  POLL_TIME_BUDGET_MS,
+  POLL_NEW_WINDOW_GAP_MS,
+  cronSecret: process.env.CRON_SECRET,
   configPath: __filename,
 };
